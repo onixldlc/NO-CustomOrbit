@@ -1,0 +1,97 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version_override:
+        description: 'Optional version override (e.g. 1.2.3). Leave empty to auto-detect'
+        required: false
+        default: ''
+      prerelease:
+        description: 'Mark as pre-release?'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # ── Step 1: Build stubs ──────────────────────────────────────────
+      - name: Build stubs
+        run: |
+          echo "::group::Building Assembly-CSharp stub"
+          dotnet build .github/ci/stubs/Assembly-CSharp/Assembly-CSharp.csproj -c Release --configfile .github/ci/NuGet.config
+          echo "::endgroup::"
+
+      # ── Step 2: Detect version ───────────────────────────────────────
+      - name: Detect version
+        id: version
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.inputs.version_override }}" ]; then
+            VER="${{ github.event.inputs.version_override }}"
+          elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            # Strip the leading 'v' from the tag name
+            VER="${{ github.ref_name }}"
+            VER="${VER#v}"
+          else
+            # Extract <Version> from CI csproj
+            VER=$(grep -oP '(?<=<Version>)[^<]+' .github/ci/CustomOrbit.CI.csproj | head -1)
+            if [ -z "$VER" ]; then
+              # Fallback: extract VersionString from plugin source
+              VER=$(grep -oP '(?<=VersionString = ")[^"]+' CustomOrbitPlugin.cs | head -1)
+            fi
+            if [ -z "$VER" ]; then
+              echo "::error::Could not detect version from csproj or source"
+              exit 1
+            fi
+          fi
+          echo "VERSION=$VER" >> "$GITHUB_OUTPUT"
+          echo "Detected version: $VER"
+
+      # ── Step 3: Build mod using CI csproj ────────────────────────────
+      - name: Build mod (Release)
+        run: dotnet build .github/ci/CustomOrbit.CI.csproj -c Release --configfile .github/ci/NuGet.config
+
+      # ── Step 4: Package ──────────────────────────────────────────────
+      - name: Package artifacts
+        run: |
+          mkdir -p artifact
+          cp bin/Release/CustomOrbit.dll artifact/
+          [ -f bin/Release/CustomOrbit.pdb ] && cp bin/Release/CustomOrbit.pdb artifact/
+          cd artifact && zip -r "../CustomOrbit-v${{ steps.version.outputs.VERSION }}.zip" .
+
+      # ── Step 5: Release ──────────────────────────────────────────────
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.VERSION }}
+          name: CustomOrbit v${{ steps.version.outputs.VERSION }}
+          body: |
+            ## CustomOrbit v${{ steps.version.outputs.VERSION }}
+
+            ### Installation
+            1. Download `CustomOrbit-v${{ steps.version.outputs.VERSION }}.zip`
+            2. Extract into `BepInEx/plugins/CustomOrbit/`
+            3. Launch Nuclear Option
+          prerelease: ${{ github.event.inputs.prerelease }}
+          files: |
+            CustomOrbit-v${{ steps.version.outputs.VERSION }}.zip
+            artifact/CustomOrbit.dll
+          generate_release_notes: true

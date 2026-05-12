@@ -1,0 +1,60 @@
+name: Build Testing
+
+on:
+  push:
+    branches:
+      - testing
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-testing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # ── Step 1: Build stubs ──────────────────────────────────────────
+      - name: Build stubs
+        run: |
+          echo "::group::Building Assembly-CSharp stub"
+          dotnet build .github/ci/stubs/Assembly-CSharp/Assembly-CSharp.csproj -c Release --configfile .github/ci/NuGet.config
+          echo "::endgroup::"
+
+      # ── Step 2: Detect version ───────────────────────────────────────
+      - name: Detect version
+        id: version
+        shell: bash
+        run: |
+          VER=$(grep -oP '(?<=<Version>)[^<]+' .github/ci/CustomOrbit.CI.csproj | head -1)
+          if [ -z "$VER" ]; then
+            VER=$(grep -oP '(?<=VersionString = ")[^"]+' CustomOrbitPlugin.cs | head -1)
+          fi
+          if [ -z "$VER" ]; then
+            echo "::error::Could not detect version from csproj or source"
+            exit 1
+          fi
+          echo "VERSION=$VER" >> "$GITHUB_OUTPUT"
+          echo "Detected version: $VER"
+
+      # ── Step 3: Build mod using CI csproj ────────────────────────────
+      - name: Build mod (Release)
+        run: dotnet build .github/ci/CustomOrbit.CI.csproj -c Release --configfile .github/ci/NuGet.config
+
+      # ── Step 4: Upload temporary artifact ────────────────────────────
+      - name: Upload testing artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CustomOrbit-testing-v${{ steps.version.outputs.VERSION }}
+          path: |
+            bin/Release/CustomOrbit.dll
+            bin/Release/CustomOrbit.pdb
+          retention-days: 7
