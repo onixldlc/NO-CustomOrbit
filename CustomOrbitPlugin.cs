@@ -75,7 +75,7 @@ namespace CustomOrbit
             OrbitDistance = Config.Bind(
                 section: "OrbitCamera",
                 key: "OrbitDistance",
-                defaultValue: 10f,
+                defaultValue: 0.7f,
                 configDescription: new ConfigDescription(
                     "Distance from orbit anchor to camera."
                 )
