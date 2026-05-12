@@ -4,7 +4,7 @@
 
 ![Game Banner or Screenshot](preview.mp4) 
 
->![info]
+>[!NOTE]
 >ignore the hud thats from [ThirdPersonHUD](https://github.com/OverlordMIke/Nuclear-Option-Mod-ThirdPersonHUD) do check that mod out if you are planing on using this to get that war lighting cam vibe
 
 ## About
