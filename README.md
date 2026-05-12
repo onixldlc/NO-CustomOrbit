@@ -48,7 +48,7 @@ BepInEx/config/com.onixldlc.customorbit.cfg
    - Extract it so `BepInEx` folder is directly inside your Nuclear Option install directory (e.g. `C:\Program Files (x86)\Steam\steamapps\common\Nuclear Option\`).
    - Launch the game once — BepInEx will generate its folders.
 
-2. Download the latest release of this mod from the [Releases page](https://github.com/YourGitHubUsername/CustomOrbit/releases).
+2. Download the latest release of this mod from the [Releases page](https://github.com/onixldlc/NO-CustomOrbit/releases).
 
 3. Extract the contents of the zip file into the `BepInEx/plugins` folder.
 
