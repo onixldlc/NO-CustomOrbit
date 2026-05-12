@@ -124,6 +124,8 @@ namespace CustomOrbit
 
             OrbitState.originalPivotPosition = cam.cameraPivot.localPosition;
             OrbitState.isActive = true;
+
+            Traverse.Create(__instance).Field("viewDistAdjust").SetValue(CustomOrbit.OrbitDistance.Value);
         }
     }
 
