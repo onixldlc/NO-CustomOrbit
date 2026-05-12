@@ -2,7 +2,10 @@
 
 **A client-side mod that customizes the Orbit camera anchor position in Nuclear Option.**
 
-![Game Banner or Screenshot](preview_screenshot.png)  
+![Game Banner or Screenshot](preview.mp4) 
+
+>![info]
+>ignore the hud thats from [ThirdPersonHUD](https://github.com/OverlordMIke/Nuclear-Option-Mod-ThirdPersonHUD) do check that mod out if you are planing on using this to get that war lighting cam vibe
 
 ## About
 
