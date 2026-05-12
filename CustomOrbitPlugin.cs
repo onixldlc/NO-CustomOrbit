@@ -108,6 +108,12 @@ namespace CustomOrbit
         }
     }
 
+    internal static class OrbitState
+    {
+        internal static bool isActive;
+        internal static Vector3 originalPivotPosition;
+    }
+
     [HarmonyPatch(typeof(CameraOrbitState), nameof(CameraOrbitState.EnterState))]
     internal static class CameraOrbitState_EnterState_Patch
     {
@@ -116,18 +122,17 @@ namespace CustomOrbit
             if (!CustomOrbit.Enabled.Value)
                 return;
 
-            CameraOrbitState_UpdateState_Patch.originalPivotPosition = cam.cameraPivot.localPosition;
+            OrbitState.originalPivotPosition = cam.cameraPivot.localPosition;
+            OrbitState.isActive = true;
         }
     }
 
     [HarmonyPatch(typeof(CameraOrbitState), nameof(CameraOrbitState.UpdateState))]
     internal static class CameraOrbitState_UpdateState_Patch
     {
-        internal static Vector3 originalPivotPosition;
-
         static void Postfix(CameraOrbitState __instance, CameraStateManager cam)
         {
-            if (!CustomOrbit.Enabled.Value)
+            if (!CustomOrbit.Enabled.Value || !OrbitState.isActive)
                 return;
 
             var offset = new Vector3(
@@ -145,10 +150,11 @@ namespace CustomOrbit
     {
         static void Prefix(CameraOrbitState __instance, CameraStateManager cam)
         {
-            if (!CustomOrbit.Enabled.Value)
+            if (!OrbitState.isActive)
                 return;
 
-            cam.cameraPivot.localPosition = CameraOrbitState_UpdateState_Patch.originalPivotPosition;
+            cam.cameraPivot.localPosition = OrbitState.originalPivotPosition;
+            OrbitState.isActive = false;
         }
     }
 }
