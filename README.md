@@ -5,7 +5,7 @@
 ![Game Banner or Screenshot](./preview.gif) 
 
 >[!NOTE]
->ignore the hud thats from [ThirdPersonHUD](https://github.com/OverlordMIke/Nuclear-Option-Mod-ThirdPersonHUD) do check that mod out if you are planing on using this to get that war lighting cam vibe
+>ignore the hud, that's from another mod called [ThirdPersonHUD](https://github.com/OverlordMIke/Nuclear-Option-Mod-ThirdPersonHUD). do check that mod out if you are planing on using this to get that war lighting cam vibe
 
 ## About
 
@@ -54,6 +54,8 @@ BepInEx/config/com.gnol.customorbit.cfg
 
 ## Disclaimer
 
-> This is a **Client-side mod.**
-> not sure how this would get you banned... since all it does is to allow you to modify the center of the orbit position. but tbf this thing is still a mod and not vanila so **at your own risk**
-> oh yeah... if this code base looked alot like [ThirdPersonHUD](https://github.com/OverlordMIke/Nuclear-Option-Mod-ThirdPersonHUD) that's because i basically uses his project as a steping stone to build this as this is actually my first time making a mod for unity game, and you should use the ThirdPersonHUD as this will make it look alot more like war... lightning... camera + hud
+> [!CAUTION]
+> While moving your orbit camera 2 units higher won't give you any advantage, do check if the server allows mods such as this!. since using it might get you kicked, banned, or penalized on a public server. So do **use it at your own risk!**
+
+> [!NOTE]
+> Now this is a **Client-side** only mod. And ngl i'm not sure how this might get you banned since all it does is allows you to modify the center of the orbit position. not really something that are "cheaty" in my opinion but because there are plenty of mod that says that installing their mods might get you banned from a public server, well i might as well put the warning here
