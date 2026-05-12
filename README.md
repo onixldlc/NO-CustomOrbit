@@ -25,7 +25,7 @@ Once installed, the mod is **enabled by default**. You can tweak all values via 
 
 After first launch, a config file is generated at:
 ```
-BepInEx/config/com.gnol.customorbit.cfg
+BepInEx/config/com.onixldlc.customorbit.cfg
 ```
 
 | Setting | Default | Description |
